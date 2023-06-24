@@ -10,9 +10,9 @@ import com.kingscripts.autoskyblock.autoskyblockmod.commands.MacroCommand;
 import com.kingscripts.autoskyblock.autoskyblockmod.handlers.ConfigHandler;
 import com.kingscripts.autoskyblock.autoskyblockmod.handlers.TextRenderer;
 import com.kingscripts.autoskyblock.autoskyblockmod.macros.MacroManager;
-import com.kingscripts.autoskyblock.autoskyblockmod.macros.dungeons.catacombs.DungeonManager;
-import com.kingscripts.autoskyblock.autoskyblockmod.macros.dungeons.catacombs.RoomDetection;
-import com.kingscripts.autoskyblock.autoskyblockmod.macros.dungeons.catacombs.Waypoints;
+//import com.kingscripts.autoskyblock.autoskyblockmod.macros.dungeons.catacombs.DungeonManager;
+//import com.kingscripts.autoskyblock.autoskyblockmod.macros.dungeons.catacombs.RoomDetection;
+//import com.kingscripts.autoskyblock.autoskyblockmod.macros.dungeons.catacombs.Waypoints;
 import com.kingscripts.autoskyblock.autoskyblockmod.macros.garden.GardenManager;
 import com.kingscripts.autoskyblock.autoskyblockmod.utils.Utils;
 import java.util.HashMap;
@@ -79,9 +79,9 @@ public class AutoSkyblock {
     public void init(FMLInitializationEvent event) {
         long time1 = System.currentTimeMillis();
         MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new DungeonManager());
-        MinecraftForge.EVENT_BUS.register(new RoomDetection());
-        MinecraftForge.EVENT_BUS.register(new Waypoints());
+//        MinecraftForge.EVENT_BUS.register(new DungeonManager());
+//        MinecraftForge.EVENT_BUS.register(new RoomDetection());
+//        MinecraftForge.EVENT_BUS.register(new Waypoints());
         MinecraftForge.EVENT_BUS.register(new MacroManager());
         MinecraftForge.EVENT_BUS.register(new GardenManager());
         MinecraftForge.EVENT_BUS.register(new MacroCommand());
