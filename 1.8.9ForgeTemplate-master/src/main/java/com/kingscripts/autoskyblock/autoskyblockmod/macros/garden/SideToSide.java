@@ -18,7 +18,7 @@ public class SideToSide {
     private static boolean canRun = true;
     private static float Yaw;
     private static float Pitch;
-    private static boolean initiatedMouseSafety = false;
+    private static int initiatedMouseSafety = 0;
 
     public SideToSide() {
     }
@@ -27,25 +27,38 @@ public class SideToSide {
         MacroManager.scriptIsOn = true;
         Yaw = Minecraft.getMinecraft().thePlayer.rotationYaw;
         Pitch = Minecraft.getMinecraft().thePlayer.rotationPitch;
-        initiatedMouseSafety = false;
+        initiatedMouseSafety = 0;
     }
 
     public static void reset() {
         MacroManager.scriptIsOn = false;
-        initiatedMouseSafety = false;
+        initiatedMouseSafety = 0;
         gameStage = 1;
     }
 
     public static void main() {
         if(Minecraft.getMinecraft().thePlayer.rotationYaw != Yaw || Minecraft.getMinecraft().thePlayer.rotationPitch != Pitch ) {
-            if(!initiatedMouseSafety) {//initiates mouse safety so that you do not get banned
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "WARNING--MACRO CHECK--WARNING"));
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Initiating mouse check safety"));
+            if(initiatedMouseSafety == 0) {//initiates mouse safety so that you do not get banned
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "WARNING--MACRO CHECK--WARNING"));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Initiating mouse check safety"));
+            } else if(initiatedMouseSafety == 20){
+                //disabling movement
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Disabling Movement"));
                 Utils.disableMovement();
-                initiatedMouseSafety = true;
+            } else if (initiatedMouseSafety == 30){
+                //waiting to give it some realistic time
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Waiting..."));
+            } else if (initiatedMouseSafety == 80) {
+                //move camera angle back to normal
+                Minecraft.getMinecraft().thePlayer.rotationYaw = Yaw;
+                Minecraft.getMinecraft().thePlayer.rotationPitch = Pitch;
+                gameStage ++;
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Resuming Script"));
             }
+            initiatedMouseSafety ++;
 
         } else {
+            initiatedMouseSafety = 0;
             if (GardenManager.north_South) {
                 if (Utils.xPositionIsSame) {
                     ++gameStage;
