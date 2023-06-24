@@ -19,6 +19,8 @@ public class SideToSide {
     private static float Yaw;
     private static float Pitch;
     private static int initiatedMouseSafety = 0;
+    private static int savedGameStage;
+    private static int randomMessage = 0;
 
     public SideToSide() {
     }
@@ -39,10 +41,33 @@ public class SideToSide {
     public static void main() {
         if(Minecraft.getMinecraft().thePlayer.rotationYaw != Yaw || Minecraft.getMinecraft().thePlayer.rotationPitch != Pitch ) {
             if(initiatedMouseSafety == 0) {//initiates mouse safety so that you do not get banned
+                savedGameStage = gameStage;
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "WARNING--MACRO CHECK--WARNING"));
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Initiating mouse check safety"));
             } else if(initiatedMouseSafety == 20){
                 //disabling movement
+                randomMessage = Utils.randomWithRange(1,10);
+                if(randomMessage == 1) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("LOL");
+                } else if(randomMessage == 2) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("WTH");
+                } else if(randomMessage == 3) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("STFU");
+                } else if(randomMessage == 4) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("bruh");
+                } else if(randomMessage == 5) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("WTF");
+                } else if(randomMessage == 6) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("WOW");
+                } else if(randomMessage == 7) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("whoa");
+                }else if(randomMessage == 8) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("lol");
+                }else if(randomMessage == 9) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("wow");
+                }else {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("LMAO");
+                }
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Disabling Movement"));
                 Utils.disableMovement();
             } else if (initiatedMouseSafety == 30){
@@ -52,7 +77,7 @@ public class SideToSide {
                 //move camera angle back to normal
                 Minecraft.getMinecraft().thePlayer.rotationYaw = Yaw;
                 Minecraft.getMinecraft().thePlayer.rotationPitch = Pitch;
-                gameStage ++;
+                gameStage = savedGameStage + 1;
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Resuming Script"));
             }
             initiatedMouseSafety ++;

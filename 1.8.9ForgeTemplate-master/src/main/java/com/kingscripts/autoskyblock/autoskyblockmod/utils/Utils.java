@@ -46,6 +46,11 @@ public class Utils {
     public static boolean xPositionIsSame = false;
     public static boolean yPositionIsSame = false;
     public static boolean zPositionIsSame = false;
+    public static int randomWithRange(int min, int max){   //defining method for a random number generator
+
+        int range = (max - min) + 1;
+        return (int)(Math.random() * range) + min;
+    }
     public static void disableMovement(){
         KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindLeft.getKeyCode(), false);
         KeyBinding.setKeyBindState(Minecraft.getMinecraft().gameSettings.keyBindRight.getKeyCode(), false);
