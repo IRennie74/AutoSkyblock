@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "autoskyblock",
+    "name": "AutoSkyblock",
+    "description": "Automatically plays skyblock for you",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://discord.gg/wrjbrhxX",
+    "updateUrl": "",
+    "authorList": ["King Scripts"],
+    "credits": "",
+    "logoFile": "assets/logo.png",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
