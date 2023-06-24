@@ -18,9 +18,13 @@ public class SideToSide {
     private static boolean canRun = true;
     private static float Yaw;
     private static float Pitch;
+    private static float yawAdd;
+    private static float pitchAdd;
     private static int initiatedMouseSafety = 0;
     private static int savedGameStage;
     private static int randomMessage = 0;
+    private static float lerp = 0.1f;
+    private static int timesAdded = 0;
 
     public SideToSide() {
     }
@@ -30,16 +34,18 @@ public class SideToSide {
         Yaw = Minecraft.getMinecraft().thePlayer.rotationYaw;
         Pitch = Minecraft.getMinecraft().thePlayer.rotationPitch;
         initiatedMouseSafety = 0;
+        timesAdded = 0;
     }
 
     public static void reset() {
         MacroManager.scriptIsOn = false;
         initiatedMouseSafety = 0;
         gameStage = 1;
+        timesAdded = 0;
     }
 
     public static void main() {
-        if(Minecraft.getMinecraft().thePlayer.rotationYaw != Yaw || Minecraft.getMinecraft().thePlayer.rotationPitch != Pitch ) {
+        if(Minecraft.getMinecraft().thePlayer.rotationYaw != Yaw || Minecraft.getMinecraft().thePlayer.rotationPitch != Pitch) {
             if(initiatedMouseSafety == 0) {//initiates mouse safety so that you do not get banned
                 savedGameStage = gameStage;
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "WARNING--MACRO CHECK--WARNING"));
@@ -73,17 +79,27 @@ public class SideToSide {
             } else if (initiatedMouseSafety == 30){
                 //waiting to give it some realistic time
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Waiting..."));
-            } else if (initiatedMouseSafety == 80) {
+            } else if (initiatedMouseSafety == 100) {
+                yawAdd = Utils.lerp(Minecraft.getMinecraft().thePlayer.rotationYaw, Yaw, lerp);//initial yaw math
+                pitchAdd = Utils.lerp(Minecraft.getMinecraft().thePlayer.rotationPitch, Pitch, lerp);//initial yaw math
+            } else if (initiatedMouseSafety >= 101) {
                 //move camera angle back to normal
-                Minecraft.getMinecraft().thePlayer.rotationYaw = Yaw;
-                Minecraft.getMinecraft().thePlayer.rotationPitch = Pitch;
-                gameStage = savedGameStage + 1;
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Resuming Script"));
+                if(1 / lerp >= timesAdded){//looped adding yaw
+                    Minecraft.getMinecraft().thePlayer.rotationYaw += yawAdd;
+                    Minecraft.getMinecraft().thePlayer.rotationPitch += pitchAdd;
+                } else{//good to run script
+                    gameStage = savedGameStage + 1;
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Resuming Script"));
+                    Minecraft.getMinecraft().thePlayer.rotationYaw = Yaw;
+                    Minecraft.getMinecraft().thePlayer.rotationPitch = Pitch;
+                }
+                timesAdded++;// end of looped adding yaw
             }
             initiatedMouseSafety ++;
 
         } else {
             initiatedMouseSafety = 0;
+            timesAdded = 0;
             if (GardenManager.north_South) {
                 if (Utils.xPositionIsSame) {
                     ++gameStage;
