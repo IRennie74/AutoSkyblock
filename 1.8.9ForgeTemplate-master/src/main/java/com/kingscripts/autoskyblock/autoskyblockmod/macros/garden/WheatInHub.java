@@ -5,31 +5,21 @@
 
 package com.kingscripts.autoskyblock.autoskyblockmod.macros.garden;
 
-import com.kingscripts.autoskyblock.autoskyblockmod.AutoSkyblock;
 import com.kingscripts.autoskyblock.autoskyblockmod.macros.MacroManager;
-import com.kingscripts.autoskyblock.autoskyblockmod.utils.GardenUtils;
+import com.kingscripts.autoskyblock.autoskyblockmod.macros.garden.savedscripts.WheatHub;
+import com.kingscripts.autoskyblock.autoskyblockmod.macros.garden.savedscripts.WheatHub2;
 import com.kingscripts.autoskyblock.autoskyblockmod.utils.Utils;
-import net.java.games.input.Component;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
-import org.lwjgl.input.Keyboard;
-import scala.swing.event.ButtonClicked;
 
 import java.io.*;
-
-import java.awt.*;
-import java.util.Scanner;
 
 public class WheatInHub {
     static Minecraft mc = Minecraft.getMinecraft();
     public static int gameStage = 1;
     private static boolean useKeyStrokes = false;
-    private static int count = 1;
+    private static int count = 0;
+    private static int count1 = 0;
     private static boolean convertScript = false;
     private static boolean checkForStop = false;
     private static boolean checkForCamera = false;
@@ -72,6 +62,7 @@ public class WheatInHub {
         timesAdded = 0;
         gameStage = 1;
         count = 1;
+        count1 = 0;
     }
 
     public static void reset() {
@@ -80,6 +71,7 @@ public class WheatInHub {
         gameStage = 1;
         timesAdded = 0;
         count = 1;
+        count1 = 0;
         Utils.resetPositionIsSame();
         checkForStop = false;
         checkForCamera = false;
@@ -87,23 +79,111 @@ public class WheatInHub {
 
     public static void main() {
         if (MacroManager.scriptIsOn) {
-            convertScript = false;
-            useKeyStrokes = true;
+            convertScript = true;
+            useKeyStrokes = false;
             if(convertScript){
 
+                //yaw,pitch,jump,sneak,sprint,left,right,back,forward,attack,useitem
+                //11
+                if(count1 <= 914) {
+                    Minecraft.getMinecraft().thePlayer.rotationYaw = Float.parseFloat(WheatHub.movement[count1][0]);
+                    Minecraft.getMinecraft().thePlayer.rotationPitch = Float.parseFloat(WheatHub.movement[count1][1]);
+                    if (WheatHub.movement[count1][2] == "t") {//jump
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
+                    }
+                    if (WheatHub.movement[count1][3] == "t") {//sneak
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), false);
+                    }
+                    if (WheatHub.movement[count1][4] == "t") {//sprint
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), false);
+                    }
+                    if (WheatHub.movement[count1][5] == "t") {//left
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), false);
+                    }
+                    if (WheatHub.movement[count1][6] == "t") {//right
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), false);
+                    }
+                    if (WheatHub.movement[count1][7] == "t") {//back
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), false);
+                    }
+                    if (WheatHub.movement[count1][8] == "t") {//forward
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), false);
+                    }
+                    if (WheatHub.movement[count1][9] == "t") {//attack
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), false);
+                    }
+                    if (WheatHub.movement[count1][10] == "t") {//useitem
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
+                    }
+                } else {
+                    Minecraft.getMinecraft().thePlayer.rotationYaw = Float.parseFloat(WheatHub2.movement2[count1][0]);
+                    Minecraft.getMinecraft().thePlayer.rotationPitch = Float.parseFloat(WheatHub2.movement2[count1][1]);
+                    if (WheatHub2.movement2[count1][2] == "t") {//jump
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
+                    }
+                    if (WheatHub2.movement2[count1][3] == "t") {//sneak
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), false);
+                    }
+                    if (WheatHub2.movement2[count1][4] == "t") {//sprint
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), false);
+                    }
+                    if (WheatHub2.movement2[count1][5] == "t") {//left
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), false);
+                    }
+                    if (WheatHub2.movement2[count1][6] == "t") {//right
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), false);
+                    }
+                    if (WheatHub2.movement2[count1][7] == "t") {//back
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), false);
+                    }
+                    if (WheatHub2.movement2[count1][8] == "t") {//forward
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), false);
+                    }
+                    if (WheatHub2.movement2[count1][9] == "t") {//attack
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), false);
+                    }
+                    if (WheatHub2.movement2[count1][10] == "t") {//useitem
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
+                    } else {
+                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
+                    }
+                }
 
-//                try {
-//                    File myObj = new File("D:\\Mod\\hubWheat.txt");
-//                    Scanner myReader = new Scanner(myObj);
-//                    while (myReader.hasNextLine()) {
-//                        String data = myReader.nextLine();
-//                        System.out.println(data);
-//                    }
-//                    myReader.close();
-//                } catch (FileNotFoundException e) {
-//                    System.out.println("An error occurred.");
-//                    e.printStackTrace();
-//                }
+                count1++;
             }
 
 
