@@ -17,6 +17,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 public class FlatCrops {
     static Minecraft mc = Minecraft.getMinecraft();
     private static int gameStage = 1;
+    private static float Yaw;
+    private static float Pitch;
     private static int count = 0;
     private static int sideNumber = 1;
     private static double currentSideStop;
@@ -26,6 +28,13 @@ public class FlatCrops {
     private static boolean checkForStopBottom = false;
     private static boolean checkForStopSide = false;
     private static boolean checkForStopSideLeft = false;
+    private static boolean angleUp = true;
+    private static int timesAdded = 0;
+    private static int initiatedMouseSafety = 0;
+    private static int randomMessage = 0;
+    private static float yawAdd;
+    private static float pitchAdd;
+    private static float lerp = 0.1f;
 
     public FlatCrops() {
     }
@@ -37,8 +46,12 @@ public class FlatCrops {
         checkForStopBottom = false;
         checkForStopTop = false;
         sneakEnabled = true;
+        angleUp = true;
         sideNumber = 1;
         gameStage = 1;
+        timesAdded = 0;
+        initiatedMouseSafety = 0;
+        Pitch = 50;
     }
 
     public static void reset() {
@@ -47,19 +60,85 @@ public class FlatCrops {
         checkForStopSideLeft = false;
         checkForStopBottom = false;
         checkForStopTop = false;
+        angleUp = true;
         gameStage = 1;
         sneakEnabled = true;
         sideNumber = 1;
+        timesAdded = 0;
+        initiatedMouseSafety = 0;
+        Pitch = 50;
     }
 
     public static void main() {
+        if (angleUp) {
+            Yaw = 180;
+        } else {
+            Yaw = 0;
+        }
+
+        if(Minecraft.getMinecraft().thePlayer.rotationYaw != Yaw || Minecraft.getMinecraft().thePlayer.rotationPitch != Pitch) {
+            if(initiatedMouseSafety == 0) {//initiates mouse safety so that you do not get banned
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "WARNING--MACRO CHECK--WARNING"));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Initiating mouse check safety"));
+            } else if(initiatedMouseSafety == 20){
+                //disabling movement
+                randomMessage = Utils.randomWithRange(1,10);
+                if(randomMessage == 1) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("LOL");
+                } else if(randomMessage == 2) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("WTH");
+                } else if(randomMessage == 3) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("STFU");
+                } else if(randomMessage == 4) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("bruh");
+                } else if(randomMessage == 5) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("WTF");
+                } else if(randomMessage == 6) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("WOW");
+                } else if(randomMessage == 7) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("whoa");
+                }else if(randomMessage == 8) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("lol");
+                }else if(randomMessage == 9) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("wow");
+                }else {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("LMAO");
+                }
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Disabling Movement"));
+                Utils.disableMovement();
+            } else if (initiatedMouseSafety == 30){
+                //waiting to give it some realistic time
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Waiting..."));
+            } else if (initiatedMouseSafety == 100) {
+                yawAdd = Utils.lerp(Minecraft.getMinecraft().thePlayer.rotationYaw, Yaw, lerp);//initial yaw math
+                pitchAdd = Utils.lerp(Minecraft.getMinecraft().thePlayer.rotationPitch, Pitch, lerp);//initial yaw math
+            } else if (initiatedMouseSafety >= 301) {
+//                //move camera angle back to normal
+//                if(1 / lerp >= timesAdded){//looped adding yaw
+//                    Minecraft.getMinecraft().thePlayer.rotationYaw += yawAdd;
+//                    Minecraft.getMinecraft().thePlayer.rotationPitch += pitchAdd;
+//                } else{//good to run script
+//                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Resuming Script"));
+//                    Minecraft.getMinecraft().thePlayer.rotationYaw = Yaw;
+//                    Minecraft.getMinecraft().thePlayer.rotationPitch = Pitch;
+//                }
+//                timesAdded++;// end of looped adding yaw
+                start();
+                Minecraft.getMinecraft().thePlayer.sendChatMessage("/warp garden");
+            }
+            initiatedMouseSafety ++;
+
+        } else {
+            initiatedMouseSafety = 0;
+            timesAdded = 0;
+
         ++count;
         if (count < 20) {
             Utils.resetPositionIsSame();
         }
 
         if (checkForStopTop) {//checks if the player is running up and should stop
-            if(sneakEnabled) {
+            if (sneakEnabled) {
                 if ((double) Minecraft.getMinecraft().thePlayer.getPosition().getZ() <= -139) {
                     KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
                     KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
@@ -73,8 +152,8 @@ public class FlatCrops {
                     sneakEnabled = true;
                 }
             }
-        } else if(checkForStopBottom) {//checks if the player is running down and should stop
-            if(sneakEnabled) {
+        } else if (checkForStopBottom) {//checks if the player is running down and should stop
+            if (sneakEnabled) {
                 if ((double) Minecraft.getMinecraft().thePlayer.getPosition().getZ() >= -53) {
                     KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
                     KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
@@ -88,14 +167,14 @@ public class FlatCrops {
                     sneakEnabled = true;
                 }
             }
-        } else if(checkForStopSide) {
+        } else if (checkForStopSide) {
             if ((double) Minecraft.getMinecraft().thePlayer.getPosition().getX() >= getCurrentSideStop()) {
                 Utils.disableMovement();
                 ++gameStage;
                 checkForStopSide = false;
                 sideNumber++;
             }
-        } else if(checkForStopSideLeft) {
+        } else if (checkForStopSideLeft) {
             if ((double) Minecraft.getMinecraft().thePlayer.getPosition().getX() <= getCurrentSideStop()) {
                 Utils.disableMovement();
                 ++gameStage;
@@ -117,6 +196,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 4) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 5) {//second row
@@ -126,6 +206,7 @@ public class FlatCrops {
             checkForStopBottom = true;
         } else if (gameStage == 6) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 7) {//third row
@@ -135,19 +216,21 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 8) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }else if (gameStage == 9) {//fourth row
+        } else if (gameStage == 9) {//fourth row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        } else if(gameStage == 10) {//jumping over the wooden railing
+        } else if (gameStage == 10) {//jumping over the wooden railing
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 11){//repositioning in first column
+        } else if (gameStage == 11) {//repositioning in first column
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSideLeft = true;
@@ -164,6 +247,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 13) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 14) {//second row
@@ -173,6 +257,7 @@ public class FlatCrops {
             checkForStopBottom = true;
         } else if (gameStage == 15) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 16) {//third row
@@ -182,15 +267,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 17) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }else if (gameStage == 18) {//fourth row
+        } else if (gameStage == 18) {//fourth row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }  else if (gameStage == 19) {
+        } else if (gameStage == 19) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 20) {//third row
@@ -200,15 +287,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 21) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 22) {//third row
+        } else if (gameStage == 22) {//third row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }else if (gameStage == 23) {
+        } else if (gameStage == 23) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 24) {//third row
@@ -218,6 +307,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 25) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 26) {//fourth row
@@ -225,18 +315,19 @@ public class FlatCrops {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        } else if(gameStage == 27) {//jumping over the wooden railing
+        } else if (gameStage == 27) {//jumping over the wooden railing
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 28) {//repositioning in first column
+        } else if (gameStage == 28) {//repositioning in first column
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSideLeft = true;
         }
 
-            //3rd row
+        //3rd row
         //3rd group
         //
         else if (gameStage == 29) {//first row
@@ -248,6 +339,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 30) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
@@ -258,6 +350,7 @@ public class FlatCrops {
             checkForStopBottom = true;
         } else if (gameStage == 32) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 33) {//third row
@@ -267,15 +360,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 34) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }else if (gameStage == 35) {//fourth row
+        } else if (gameStage == 35) {//fourth row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }  else if (gameStage == 36) {
+        } else if (gameStage == 36) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 37) {//third row
@@ -285,15 +380,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 38) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 39) {//third row
+        } else if (gameStage == 39) {//third row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }else if (gameStage == 40) {//doesnt work
+        } else if (gameStage == 40) {//doesnt work
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 41) {//third row
@@ -303,6 +400,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 42) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 43) {//third row
@@ -310,12 +408,13 @@ public class FlatCrops {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        } else if(gameStage == 44) {//jumping over the wooden railing
+        } else if (gameStage == 44) {//jumping over the wooden railing
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 45){//repositioning in first column
+        } else if (gameStage == 45) {//repositioning in first column
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSideLeft = true;
@@ -331,6 +430,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 47) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
@@ -341,6 +441,7 @@ public class FlatCrops {
             checkForStopBottom = true;
         } else if (gameStage == 49) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 50) {//third row
@@ -350,15 +451,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 51) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }else if (gameStage == 52) {//fourth row
+        } else if (gameStage == 52) {//fourth row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }  else if (gameStage == 53) {
+        } else if (gameStage == 53) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 54) {//third row
@@ -368,15 +471,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 55) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 56) {//third row
+        } else if (gameStage == 56) {//third row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }else if (gameStage == 57) {//doesnt work
+        } else if (gameStage == 57) {//doesnt work
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 58) {//third row
@@ -386,6 +491,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 59) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 60) {//third row
@@ -393,12 +499,13 @@ public class FlatCrops {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        } else if(gameStage == 61) {//jumping over the wooden railing
+        } else if (gameStage == 61) {//jumping over the wooden railing
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 62){//repositioning in first column
+        } else if (gameStage == 62) {//repositioning in first column
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSideLeft = true;
@@ -414,6 +521,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 64) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
@@ -424,6 +532,7 @@ public class FlatCrops {
             checkForStopBottom = true;
         } else if (gameStage == 66) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 67) {//third row
@@ -433,15 +542,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 68) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }else if (gameStage == 69) {//fourth row
+        } else if (gameStage == 69) {//fourth row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }  else if (gameStage == 70) {
+        } else if (gameStage == 70) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 71) {//third row
@@ -451,15 +562,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 72) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 73) {//third row
+        } else if (gameStage == 73) {//third row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }else if (gameStage == 74) {//doesnt work
+        } else if (gameStage == 74) {//doesnt work
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 75) {//third row
@@ -469,6 +582,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 76) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 77) {//third row
@@ -476,12 +590,13 @@ public class FlatCrops {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        } else if(gameStage == 78) {//jumping over the wooden railing
+        } else if (gameStage == 78) {//jumping over the wooden railing
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 79){//repositioning in first column
+        } else if (gameStage == 79) {//repositioning in first column
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSideLeft = true;
@@ -497,6 +612,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 81) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
@@ -507,6 +623,7 @@ public class FlatCrops {
             checkForStopBottom = true;
         } else if (gameStage == 83) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 84) {//third row
@@ -516,15 +633,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 85) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }else if (gameStage == 86) {//fourth row
+        } else if (gameStage == 86) {//fourth row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }  else if (gameStage == 87) {
+        } else if (gameStage == 87) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 88) {//third row
@@ -534,15 +653,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 89) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 90) {//third row
+        } else if (gameStage == 90) {//third row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }else if (gameStage == 91) {//doesnt work
+        } else if (gameStage == 91) {//doesnt work
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 92) {//third row
@@ -552,6 +673,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 93) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 94) {//third row
@@ -559,12 +681,13 @@ public class FlatCrops {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        } else if(gameStage == 95) {//jumping over the wooden railing
+        } else if (gameStage == 95) {//jumping over the wooden railing
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 96){//repositioning in first column
+        } else if (gameStage == 96) {//repositioning in first column
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSideLeft = true;
@@ -580,6 +703,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 98) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
@@ -590,6 +714,7 @@ public class FlatCrops {
             checkForStopBottom = true;
         } else if (gameStage == 100) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 101) {//third row
@@ -599,15 +724,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 102) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }else if (gameStage == 103) {//fourth row
+        } else if (gameStage == 103) {//fourth row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }  else if (gameStage == 104) {
+        } else if (gameStage == 104) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 105) {//third row
@@ -617,15 +744,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 106) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 107) {//third row
+        } else if (gameStage == 107) {//third row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }else if (gameStage == 108) {//doesnt work
+        } else if (gameStage == 108) {//doesnt work
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 109) {//third row
@@ -635,6 +764,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 110) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 111) {//third row
@@ -642,12 +772,13 @@ public class FlatCrops {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        } else if(gameStage == 112) {//jumping over the wooden railing
+        } else if (gameStage == 112) {//jumping over the wooden railing
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 113){//repositioning in first column
+        } else if (gameStage == 113) {//repositioning in first column
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSideLeft = true;
@@ -663,6 +794,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 115) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
@@ -673,6 +805,7 @@ public class FlatCrops {
             checkForStopBottom = true;
         } else if (gameStage == 117) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 118) {//third row
@@ -682,15 +815,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 119) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }else if (gameStage == 120) {//fourth row
+        } else if (gameStage == 120) {//fourth row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }  else if (gameStage == 121) {
+        } else if (gameStage == 121) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 122) {//third row
@@ -700,15 +835,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 123) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 124) {//third row
+        } else if (gameStage == 124) {//third row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }else if (gameStage == 125) {//doesnt work
+        } else if (gameStage == 125) {//doesnt work
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 126) {//third row
@@ -718,6 +855,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 127) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 128) {//third row
@@ -725,12 +863,13 @@ public class FlatCrops {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        } else if(gameStage == 129) {//jumping over the wooden railing
+        } else if (gameStage == 129) {//jumping over the wooden railing
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 130){//repositioning in first column
+        } else if (gameStage == 130) {//repositioning in first column
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSideLeft = true;
@@ -745,6 +884,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 132) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
@@ -755,6 +895,7 @@ public class FlatCrops {
             checkForStopBottom = true;
         } else if (gameStage == 134) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 135) {//third row
@@ -764,15 +905,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 136) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }else if (gameStage == 137) {//fourth row
+        } else if (gameStage == 137) {//fourth row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }  else if (gameStage == 138) {
+        } else if (gameStage == 138) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 139) {//third row
@@ -782,15 +925,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 140) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 141) {//third row
+        } else if (gameStage == 141) {//third row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }else if (gameStage == 142) {//doesnt work
+        } else if (gameStage == 142) {//doesnt work
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 143) {//third row
@@ -800,6 +945,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 144) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 145) {//third row
@@ -807,12 +953,13 @@ public class FlatCrops {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        } else if(gameStage == 146) {//jumping over the wooden railing
+        } else if (gameStage == 146) {//jumping over the wooden railing
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 147){//repositioning in first column
+        } else if (gameStage == 147) {//repositioning in first column
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSideLeft = true;
@@ -828,6 +975,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 149) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
@@ -838,6 +986,7 @@ public class FlatCrops {
             checkForStopBottom = true;
         } else if (gameStage == 151) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 152) {//third row
@@ -847,15 +996,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 153) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }else if (gameStage == 154) {//fourth row
+        } else if (gameStage == 154) {//fourth row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }  else if (gameStage == 155) {
+        } else if (gameStage == 155) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 156) {//third row
@@ -865,15 +1016,17 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 157) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 158) {//third row
+        } else if (gameStage == 158) {//third row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        }else if (gameStage == 159) {//doesnt work
+        } else if (gameStage == 159) {//doesnt work
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 160) {//third row
@@ -883,6 +1036,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 161) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 162) {//third row
@@ -890,12 +1044,13 @@ public class FlatCrops {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
-        } else if(gameStage == 163) {//jumping over the wooden railing
+        } else if (gameStage == 163) {//jumping over the wooden railing
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
             checkForStopSide = true;
-        }  else if (gameStage == 164){//repositioning in first column
+        } else if (gameStage == 164) {//repositioning in first column
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSideLeft = true;
@@ -911,6 +1066,7 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 166) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
@@ -921,6 +1077,7 @@ public class FlatCrops {
             checkForStopBottom = true;
         } else if (gameStage == 168) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 180F;
+            angleUp = true;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
             checkForStopSide = true;
         } else if (gameStage == 169) {//third row
@@ -930,9 +1087,10 @@ public class FlatCrops {
             checkForStopTop = true;
         } else if (gameStage == 170) {
             Minecraft.getMinecraft().thePlayer.rotationYaw = 0F;
+            angleUp = false;
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
             checkForStopSide = true;
-        }else if (gameStage == 171) {//fourth row
+        } else if (gameStage == 171) {//fourth row
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
@@ -947,6 +1105,7 @@ public class FlatCrops {
             sideNumber = 1;
             gameStage = 1;
         }
+    }
     }
 
     public static void safetyRestart() {

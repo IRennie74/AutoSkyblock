@@ -82,7 +82,7 @@ public class SideToSide {
             } else if (initiatedMouseSafety == 100) {
                 yawAdd = Utils.lerp(Minecraft.getMinecraft().thePlayer.rotationYaw, Yaw, lerp);//initial yaw math
                 pitchAdd = Utils.lerp(Minecraft.getMinecraft().thePlayer.rotationPitch, Pitch, lerp);//initial yaw math
-            } else if (initiatedMouseSafety >= 101) {
+            } else if (initiatedMouseSafety >= 301) {
                 //move camera angle back to normal
                 if(1 / lerp >= timesAdded){//looped adding yaw
                     Minecraft.getMinecraft().thePlayer.rotationYaw += yawAdd;
