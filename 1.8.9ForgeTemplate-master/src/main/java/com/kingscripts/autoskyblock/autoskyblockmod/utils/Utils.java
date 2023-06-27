@@ -49,6 +49,9 @@ public class Utils {
     public static float lerp(float a, float b, float f) {
         return f * (b - a);
     }
+    public static float lerp2(float a, float b, float f) {
+        return f * (b + a);
+    }
     public static int randomWithRange(int min, int max){   //defining method for a random number generator
 
         int range = (max - min) + 1;

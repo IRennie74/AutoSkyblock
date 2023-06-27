@@ -7,6 +7,7 @@ package com.kingscripts.autoskyblock.autoskyblockmod.macros;
 
 import com.kingscripts.autoskyblock.autoskyblockmod.AutoSkyblock;
 import com.kingscripts.autoskyblock.autoskyblockmod.macros.garden.GardenManager;
+import com.kingscripts.autoskyblock.autoskyblockmod.macros.garden.WheatInHub;
 import com.kingscripts.autoskyblock.autoskyblockmod.utils.GardenUtils;
 import com.kingscripts.autoskyblock.autoskyblockmod.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -51,6 +52,7 @@ public class MacroManager {
 
         if (AutoSkyblock.keyBindings[2].isPressed()) {
             Utils.disableEverything();
+
         }
 
     }

@@ -5,100 +5,139 @@
 
 package com.kingscripts.autoskyblock.autoskyblockmod.macros.garden;
 
+import com.kingscripts.autoskyblock.autoskyblockmod.AutoSkyblock;
 import com.kingscripts.autoskyblock.autoskyblockmod.macros.MacroManager;
 import com.kingscripts.autoskyblock.autoskyblockmod.utils.GardenUtils;
 import com.kingscripts.autoskyblock.autoskyblockmod.utils.Utils;
+import net.java.games.input.Component;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
+import org.lwjgl.input.Keyboard;
+import scala.swing.event.ButtonClicked;
+
+import java.io.*;
+
+import java.awt.*;
+import java.util.Scanner;
 
 public class WheatInHub {
     static Minecraft mc = Minecraft.getMinecraft();
     public static int gameStage = 1;
-    private static int count = 0;
+    private static boolean useKeyStrokes = false;
+    private static int count = 1;
+    private static boolean convertScript = false;
     private static boolean checkForStop = false;
+    private static boolean checkForCamera = false;
+    private static boolean canRunMath = true;
+    private static boolean useLerp2;
     private static double currentStopX;
     private static double currentStopZ;
     private static int xStopDirection;
     private static int zStopDirection;
+    private static float yawAdd;
+    private static float pitchAdd;
+    private static float Yaw;
+    private static float Pitch;
+
+    private static float lerp = 0.02f;
+    private static int timesAdded = 0;
 
 
     public WheatInHub() {
     }
 
     public static void start() {
+        File log = new File("D:\\Mod\\hubWheat.txt");
+        try{
+            if(log.exists()==false){
+                System.out.println("We had to make a new file.");
+                log.createNewFile();
+            }
+            PrintWriter out = new PrintWriter(new FileWriter(log, true));
+            out.close();
+        }catch(IOException e){
+            System.out.println("COULD NOT LOG!!");
+        }
+
         MacroManager.scriptIsOn = true;
         Utils.resetPositionIsSame();
         checkForStop = false;
+        checkForCamera = false;
+        canRunMath = true;
+        timesAdded = 0;
+        gameStage = 1;
+        count = 1;
     }
 
     public static void reset() {
         MacroManager.scriptIsOn = false;
+        canRunMath = true;
         gameStage = 1;
+        timesAdded = 0;
         count = 1;
         Utils.resetPositionIsSame();
         checkForStop = false;
+        checkForCamera = false;
     }
 
     public static void main() {
         if (MacroManager.scriptIsOn) {
-            if(checkForStop){//if check for stop is active then only check for stops runs because it is constantly
-                // checking to see if the player has passed a set of coordinates
-                //Check X first
-                if(xStopDirection != 0){//checks if X is inactive
-                    if(xStopDirection > 0){//checks to see which direction we are checking in
-                        if ((double) Minecraft.getMinecraft().thePlayer.getPosition().getX() >= currentStopX) {
-                            //the player has passed the checkpoint
-                            gameStage++;
-                            checkForStop = false;
-                            xStopDirection = 0;
-                        }
-                    } else {//has to be smaller if it's not bigger
-                        if ((double) Minecraft.getMinecraft().thePlayer.getPosition().getX() <= currentStopX) {
-                            //the player has passed the checkpoint
-                            gameStage++;
-                            checkForStop = false;
-                            xStopDirection = 0;
-                        }
-                    }
+            convertScript = false;
+            useKeyStrokes = true;
+            if(convertScript){
 
-                } else {//it checks if stop is active and if X is inactive then Z has to be active
-                    if(zStopDirection > 0){//checks to see which direction we are checking in
-                        if ((double) Minecraft.getMinecraft().thePlayer.getPosition().getZ() >= currentStopZ) {
-                            //the player has passed the checkpoint
-                            gameStage++;
-                            checkForStop = false;
-                            zStopDirection = 0;
-                        }
-                    } else {//has to be smaller if it's not bigger
-                        if ((double) Minecraft.getMinecraft().thePlayer.getPosition().getZ() <= currentStopZ) {
-                            //the player has passed the checkpoint
-                            gameStage++;
-                            checkForStop = false;
-                            zStopDirection = 0;
-                        }
-                    }
-                }
-            }else{//not checking for stop so the rest of the script can be executed
 
-                if (gameStage == 1) {
-                    //look at -137.5/1.2
-
-                } else if (gameStage == 2) {
-                    //run jump until 19/ /-93
-                    KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
-                    KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
-                    KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
-                    //makes the program start checking if the player has reached the coordinates 19
-                    currentStopX = 19;
-                    xStopDirection = 1;
-                    checkForStop = true;
-                } else if (gameStage == 3) {
-                    //run jump
-                    KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
-                    KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
-                    KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
-                }
+//                try {
+//                    File myObj = new File("D:\\Mod\\hubWheat.txt");
+//                    Scanner myReader = new Scanner(myObj);
+//                    while (myReader.hasNextLine()) {
+//                        String data = myReader.nextLine();
+//                        System.out.println(data);
+//                    }
+//                    myReader.close();
+//                } catch (FileNotFoundException e) {
+//                    System.out.println("An error occurred.");
+//                    e.printStackTrace();
+//                }
             }
+
+
+
+
+
+
+            if(useKeyStrokes){
+                File log = new File("D:\\Mod\\hubWheat.txt");
+                try{
+                    if(log.exists()==false){
+                        System.out.println("We had to make a new file.");
+                        log.createNewFile();
+                    }
+                    PrintWriter out = new PrintWriter(new FileWriter(log, true));
+                    out.append("{");
+                    out.append("'" + Minecraft.getMinecraft().thePlayer.rotationYaw + "', ");
+                    out.append("'" + Minecraft.getMinecraft().thePlayer.rotationPitch + "', ");
+                    if(Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown())out.append("'true', "); else out.append("'false', ");
+                    if(Minecraft.getMinecraft().gameSettings.keyBindSneak.isKeyDown())out.append("'true', "); else out.append("'false', ");
+                    if(Minecraft.getMinecraft().gameSettings.keyBindSprint.isKeyDown())out.append("'true', "); else out.append("'false', ");
+                    if(Minecraft.getMinecraft().gameSettings.keyBindLeft.isKeyDown())out.append("'true', "); else out.append("'false', ");
+                    if(Minecraft.getMinecraft().gameSettings.keyBindRight.isKeyDown())out.append("'true', "); else out.append("'false', ");
+                    if(Minecraft.getMinecraft().gameSettings.keyBindBack.isKeyDown())out.append("'true', "); else out.append("'false', ");
+                    if(Minecraft.getMinecraft().gameSettings.keyBindForward.isKeyDown())out.append("'true', "); else out.append("'false', ");
+                    if(Minecraft.getMinecraft().gameSettings.keyBindAttack.isKeyDown())out.append("'true', "); else out.append("'false', ");
+                    if(Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown())out.append("'true'},\n"); else out.append("'false'},\n");
+                    out.close();
+                }catch(IOException e){
+                    System.out.println("COULD NOT LOG!!");
+                }
+                count++;
+            }
+
         }
     }
 
