@@ -965,7 +965,7 @@ public class FlatCrops {
         }else if (sideNumber == 4) {//when to stop jumping
             return -38;
         }else if (sideNumber == 5) {//where to reposition to
-            return -39.1;
+            return -39;
             //changes to forward on the 2nd group
 
         }else if (sideNumber == 6) {//where to reposition to
@@ -1005,7 +1005,7 @@ public class FlatCrops {
         }else if (sideNumber == 22) {//starts the log jumping
             return -18;
         }else if (sideNumber == 23) {//starts the log jumping
-            return -21.5;
+            return -21;
         }
         //4th group
         //
