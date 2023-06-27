@@ -29,7 +29,6 @@ public class FlatCrops {
     private static boolean checkForStopSide = false;
     private static boolean checkForStopSideLeft = false;
     private static boolean angleUp = true;
-    private static int timesAdded = 0;
     private static int initiatedMouseSafety = 0;
     private static int randomMessage = 0;
     private static float yawAdd;
@@ -49,7 +48,6 @@ public class FlatCrops {
         angleUp = true;
         sideNumber = 1;
         gameStage = 1;
-        timesAdded = 0;
         initiatedMouseSafety = 0;
         Pitch = 50;
     }
@@ -64,7 +62,6 @@ public class FlatCrops {
         gameStage = 1;
         sneakEnabled = true;
         sideNumber = 1;
-        timesAdded = 0;
         initiatedMouseSafety = 0;
         Pitch = 50;
     }
@@ -80,7 +77,7 @@ public class FlatCrops {
             if(initiatedMouseSafety == 0) {//initiates mouse safety so that you do not get banned
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "WARNING--MACRO CHECK--WARNING"));
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Initiating mouse check safety"));
-            } else if(initiatedMouseSafety == 20){
+            } else if(initiatedMouseSafety == 100){
                 //disabling movement
                 randomMessage = Utils.randomWithRange(1,10);
                 if(randomMessage == 1) {
@@ -106,13 +103,15 @@ public class FlatCrops {
                 }
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Disabling Movement"));
                 Utils.disableMovement();
-            } else if (initiatedMouseSafety == 30){
+            } else if (initiatedMouseSafety == 170){
                 //waiting to give it some realistic time
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "Waiting..."));
-            } else if (initiatedMouseSafety == 100) {
-                yawAdd = Utils.lerp(Minecraft.getMinecraft().thePlayer.rotationYaw, Yaw, lerp);//initial yaw math
-                pitchAdd = Utils.lerp(Minecraft.getMinecraft().thePlayer.rotationPitch, Pitch, lerp);//initial yaw math
-            } else if (initiatedMouseSafety >= 301) {
+            }
+//            else if (initiatedMouseSafety == 180) {
+//                yawAdd = Utils.lerp(Minecraft.getMinecraft().thePlayer.rotationYaw, Yaw, lerp);//initial yaw math
+//                pitchAdd = Utils.lerp(Minecraft.getMinecraft().thePlayer.rotationPitch, Pitch, lerp);//initial yaw math
+//            }
+            else if (initiatedMouseSafety >= 301) {
 //                //move camera angle back to normal
 //                if(1 / lerp >= timesAdded){//looped adding yaw
 //                    Minecraft.getMinecraft().thePlayer.rotationYaw += yawAdd;
@@ -130,7 +129,6 @@ public class FlatCrops {
 
         } else {
             initiatedMouseSafety = 0;
-            timesAdded = 0;
 
         ++count;
         if (count < 20) {
@@ -1096,6 +1094,7 @@ public class FlatCrops {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
             checkForStopBottom = true;
         } else if (gameStage == 172) {
+            angleUp = true;
             Minecraft.getMinecraft().thePlayer.sendChatMessage("/warp garden");
             checkForStopSide = false;
             checkForStopSideLeft = false;
@@ -1114,7 +1113,6 @@ public class FlatCrops {
         gameStage = 1;
     }
     public static double getCurrentSideStop() {
-        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "" + sideNumber + ""));
         if (sideNumber == 1) {//2nd row stop (top)
             return -43.5;
         } else if (sideNumber == 2) {//3rd row stop (bottom)
