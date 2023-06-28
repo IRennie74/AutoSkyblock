@@ -92,6 +92,7 @@ public class WheatInHub {
     private static int hubLevel = 1;
     private static long startMillis = 0;
     private static boolean hasSavedMillis = false;
+    private static boolean thisScriptOn = false;
     public static boolean pasting = true;
     private static long lastSavedDivision;
     private static Instant watch1;
@@ -103,41 +104,7 @@ public class WheatInHub {
     public static String getWheatHub(int wheatLevel,int count1, int level){
         if(wheatLevel == 1)return WheatHub.movement[count1][level];
         else if(wheatLevel == 2)return WheatHub2.movement2[count1][level];
-        else if(wheatLevel == 3)return WheatHub3.movement2[count1][level];
-        else if(wheatLevel == 4)return WheatHub4.movement2[count1][level];
-        else if(wheatLevel == 5)return WheatHub5.movement2[count1][level];
-        else if(wheatLevel == 6)return WheatHub6.movement2[count1][level];
-        else if(wheatLevel == 7)return WheatHub7.movement2[count1][level];
-        else if(wheatLevel == 8)return WheatHub8.movement2[count1][level];
-        else if(wheatLevel == 9)return WheatHub9.movement2[count1][level];
-        else if(wheatLevel == 10)return WheatHub10.movement2[count1][level];
-        else if(wheatLevel == 11)return WheatHub11.movement2[count1][level];
-        else if(wheatLevel == 13)return WheatHub12.movement2[count1][level];
-        else if(wheatLevel == 14)return WheatHub13.movement2[count1][level];
-        else if(wheatLevel == 15)return WheatHub14.movement2[count1][level];
-        else if(wheatLevel == 16)return WheatHub15.movement2[count1][level];
-        else if(wheatLevel == 17)return WheatHub16.movement2[count1][level];
-        else if(wheatLevel == 18)return WheatHub17.movement2[count1][level];
-        else if(wheatLevel == 19)return WheatHub18.movement2[count1][level];
-        else if(wheatLevel == 20)return WheatHub19.movement2[count1][level];
-        else if(wheatLevel == 21)return WheatHub20.movement2[count1][level];
-        else if(wheatLevel == 22)return WheatHub21.movement2[count1][level];
-        else if(wheatLevel == 23)return WheatHub22.movement2[count1][level];
-        else if(wheatLevel == 24)return WheatHub23.movement2[count1][level];
-        else if(wheatLevel == 25)return WheatHub24.movement2[count1][level];
-        else if(wheatLevel == 26)return WheatHub26.movement2[count1][level];
-        else if(wheatLevel == 27)return WheatHub27.movement2[count1][level];
-        else if(wheatLevel == 28)return WheatHub28.movement2[count1][level];
-        else if(wheatLevel == 29)return WheatHub29.movement2[count1][level];
-        else if(wheatLevel == 30)return WheatHub30.movement2[count1][level];
-        else if(wheatLevel == 31)return WheatHub31.movement2[count1][level];
-        else if(wheatLevel == 32)return WheatHub32.movement2[count1][level];
-        else if(wheatLevel == 33)return WheatHub33.movement2[count1][level];
-        else if(wheatLevel == 34)return WheatHub34.movement2[count1][level];
-        else if(wheatLevel == 35)return WheatHub35.movement2[count1][level];
-        else if(wheatLevel == 36)return WheatHub36.movement2[count1][level];
-        else if(wheatLevel == 37)return WheatHub37.movement2[count1][level];
-        else return WheatHub11.movement2[count1][level];
+        else return null;
     }
     public static void execute(int hubLevel,int count1) {
         Minecraft.getMinecraft().thePlayer.rotationYaw = Float.parseFloat(getWheatHub(hubLevel, count1, 0));
@@ -197,13 +164,16 @@ public class WheatInHub {
                         hasSavedMillis = true;
                     }
                     watch2 = Instant.now();
-                    if ((Duration.between(watch1, watch2).toMillis()) >= 5) {
+                    if ((Duration.between(watch1, watch2).toMillis()) >= 10) {
                         hasSavedMillis = false;
                         execute(hubLevel, count1);
-                        if (count1 >= 909) {
-                            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLACK + "" + hubLevel));
+                        if (count1 >= 909 && hubLevel == 1) {
                             count1 = 0;
                             hubLevel++;
+                        }else if (count1 >= 809 && hubLevel == 2) {
+                            count1 = 0;
+                            hubLevel = 1;
+                            Minecraft.getMinecraft().thePlayer.sendChatMessage("/warp hub");
                         }
                         count1++;
                     }
@@ -285,155 +255,8 @@ public class WheatInHub {
         startMillis = 0;
         hasSavedMillis = false;
     }
-
-    public static void main() {
-//        if (MacroManager.scriptIsOn) {
-//            convertScript = true;
-//            useKeyStrokes = false;
-//            if(convertScript){
-//
-//                //yaw,pitch,jump,sneak,sprint,left,right,back,forward,attack,useitem
-//                //11
-//                if(count1 <= 909) {
-//                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "" + count1));
-//                    Minecraft.getMinecraft().thePlayer.rotationYaw = Float.parseFloat(WheatHub.movement[count1][0]);
-//                    Minecraft.getMinecraft().thePlayer.rotationPitch = Float.parseFloat(WheatHub.movement[count1][1]);
-//                    if (WheatHub.movement[count1][2] == "t") {//jump
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
-//                    }
-//                    if (WheatHub.movement[count1][3] == "t") {//sneak
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), false);
-//                    }
-//                    if (WheatHub.movement[count1][4] == "t") {//sprint
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), false);
-//                    }
-//                    if (WheatHub.movement[count1][5] == "t") {//left
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), false);
-//                    }
-//                    if (WheatHub.movement[count1][6] == "t") {//right
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), false);
-//                    }
-//                    if (WheatHub.movement[count1][7] == "t") {//back
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), false);
-//                    }
-//                    if (WheatHub.movement[count1][8] == "t") {//forward
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), false);
-//                    }
-//                    if (WheatHub.movement[count1][9] == "t") {//attack
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), false);
-//                    }
-//                    if (WheatHub.movement[count1][10] == "t") {//useitem
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
-//                    }
-//                } else if(count <= 460){
-//                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "" + count));
-//                    Minecraft.getMinecraft().thePlayer.rotationYaw = Float.parseFloat(WheatHub2.movement2[count][0]);
-//                    Minecraft.getMinecraft().thePlayer.rotationPitch = Float.parseFloat(WheatHub2.movement2[count][1]);
-//                    if (WheatHub2.movement2[count][2] == "t") {//jump
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
-//                    }
-//                    if (WheatHub2.movement2[count][3] == "t") {//sneak
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), false);
-//                    }
-//                    if (WheatHub2.movement2[count][4] == "t") {//sprint
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), false);
-//                    }
-//                    if (WheatHub2.movement2[count][5] == "t") {//left
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), false);
-//                    }
-//                    if (WheatHub2.movement2[count][6] == "t") {//right
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), false);
-//                    }
-//                    if (WheatHub2.movement2[count][7] == "t") {//back
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), false);
-//                    }
-//                    if (WheatHub2.movement2[count][8] == "t") {//forward
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), false);
-//                    }
-//                    if (WheatHub2.movement2[count][9] == "t") {//attack
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), false);
-//                    }
-//                    if (WheatHub2.movement2[count][10] == "t") {//useitem
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
-//                    } else {
-//                        KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
-//                    }
-//                    count++;
-//                } else {
-//                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/warp hub");
-//                    start();
-//                }
-//
-//                count1++;
-//            }
-//
-//
-//
-//
-//
-//
-//            if(useKeyStrokes){
-//                File log = new File("D:\\Mod\\hubWheat.txt");
-//                try{
-//                    if(log.exists()==false){
-//                        System.out.println("We had to make a new file.");
-//                        log.createNewFile();
-//                    }
-//                    PrintWriter out = new PrintWriter(new FileWriter(log, true));
-//                    out.append("{");
-//                    out.append("'" + Minecraft.getMinecraft().thePlayer.rotationYaw + "', ");
-//                    out.append("'" + Minecraft.getMinecraft().thePlayer.rotationPitch + "', ");
-//                    if(Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown())out.append("'true', "); else out.append("'false', ");
-//                    if(Minecraft.getMinecraft().gameSettings.keyBindSneak.isKeyDown())out.append("'true', "); else out.append("'false', ");
-//                    if(Minecraft.getMinecraft().gameSettings.keyBindSprint.isKeyDown())out.append("'true', "); else out.append("'false', ");
-//                    if(Minecraft.getMinecraft().gameSettings.keyBindLeft.isKeyDown())out.append("'true', "); else out.append("'false', ");
-//                    if(Minecraft.getMinecraft().gameSettings.keyBindRight.isKeyDown())out.append("'true', "); else out.append("'false', ");
-//                    if(Minecraft.getMinecraft().gameSettings.keyBindBack.isKeyDown())out.append("'true', "); else out.append("'false', ");
-//                    if(Minecraft.getMinecraft().gameSettings.keyBindForward.isKeyDown())out.append("'true', "); else out.append("'false', ");
-//                    if(Minecraft.getMinecraft().gameSettings.keyBindAttack.isKeyDown())out.append("'true', "); else out.append("'false', ");
-//                    if(Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown())out.append("'true'},\n"); else out.append("'false'},\n");
-//                    out.close();
-//                }catch(IOException e){
-//                    System.out.println("COULD NOT LOG!!");
-//                }
-//                count++;
-//            }
-
-//        }
+    public static void main(){
+        thisScriptOn = true;
     }
 
     public static void safetyRestart() {
