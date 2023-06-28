@@ -8,6 +8,7 @@ package com.kingscripts.autoskyblock.autoskyblockmod.commands;
 import com.kingscripts.autoskyblock.autoskyblockmod.handlers.ConfigHandler;
 import com.kingscripts.autoskyblock.autoskyblockmod.macros.Cobblestone;
 import com.kingscripts.autoskyblock.autoskyblockmod.macros.garden.GardenManager;
+import com.kingscripts.autoskyblock.autoskyblockmod.macros.garden.WheatInHub;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -70,6 +71,18 @@ public class MacroCommand extends CommandBase {
             ConfigHandler.writeBooleanConfig("toggles", "northSouth", false);
             GardenManager.north_South = false;
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLACK + "Set to West"));
+            ConfigHandler.reloadConfig();
+        }
+        if (args.length > 0 && args[0].equalsIgnoreCase("up")) {
+            //ConfigHandler.writeBooleanConfig("toggles", "northSouth", false);
+            WheatInHub.delay++;
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLACK + "" + WheatInHub.delay));
+            ConfigHandler.reloadConfig();
+        }
+        if (args.length > 0 && args[0].equalsIgnoreCase("down")) {
+            //ConfigHandler.writeBooleanConfig("toggles", "northSouth", false);
+            WheatInHub.delay--;
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLACK + "" + WheatInHub.delay));
             ConfigHandler.reloadConfig();
         }
 

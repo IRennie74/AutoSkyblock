@@ -14,6 +14,7 @@ import com.kingscripts.autoskyblock.autoskyblockmod.macros.MacroManager;
 //import com.kingscripts.autoskyblock.autoskyblockmod.macros.dungeons.catacombs.RoomDetection;
 //import com.kingscripts.autoskyblock.autoskyblockmod.macros.dungeons.catacombs.Waypoints;
 import com.kingscripts.autoskyblock.autoskyblockmod.macros.garden.GardenManager;
+import com.kingscripts.autoskyblock.autoskyblockmod.macros.garden.WheatInHub;
 import com.kingscripts.autoskyblock.autoskyblockmod.utils.Utils;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -85,6 +86,7 @@ public class AutoSkyblock {
         MinecraftForge.EVENT_BUS.register(new MacroManager());
         MinecraftForge.EVENT_BUS.register(new GardenManager());
         MinecraftForge.EVENT_BUS.register(new MacroCommand());
+        MinecraftForge.EVENT_BUS.register(new WheatInHub());
         ConfigHandler.reloadConfig();
         keyBindings[0] = new KeyBinding("Starts Macro", 24, "Auto Skyblock Mod");
         keyBindings[1] = new KeyBinding("Pauses/Resumes Macro", 25, "Auto Skyblock Mod");
