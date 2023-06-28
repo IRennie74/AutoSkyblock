@@ -45,6 +45,15 @@ public class MacroCommand extends CommandBase {
                 ConfigHandler.reloadConfig();
             }
         }
+        if (args.length > 0 && args[0].equalsIgnoreCase("paste")) {
+            if (Cobblestone.sneakIsActive) {
+                WheatInHub.pasting = false;
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLACK + "Set to Copying"));
+            } else {
+                WheatInHub.pasting = true;
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLACK + "Set to Pasting"));
+            }
+        }
 
         if (args.length > 0 && args[0].equalsIgnoreCase("north")) {
             GardenManager.north_South = true;
@@ -73,19 +82,6 @@ public class MacroCommand extends CommandBase {
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLACK + "Set to West"));
             ConfigHandler.reloadConfig();
         }
-        if (args.length > 0 && args[0].equalsIgnoreCase("up")) {
-            //ConfigHandler.writeBooleanConfig("toggles", "northSouth", false);
-            WheatInHub.delay++;
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLACK + "" + WheatInHub.delay));
-            ConfigHandler.reloadConfig();
-        }
-        if (args.length > 0 && args[0].equalsIgnoreCase("down")) {
-            //ConfigHandler.writeBooleanConfig("toggles", "northSouth", false);
-            WheatInHub.delay--;
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLACK + "" + WheatInHub.delay));
-            ConfigHandler.reloadConfig();
-        }
-
         if (args.length > 0 && args[0].equalsIgnoreCase("1")) {
             GardenManager.chosenGardenMacro = 1;
             ConfigHandler.writeIntConfig("macro", "chosenGardenMacro", 1);

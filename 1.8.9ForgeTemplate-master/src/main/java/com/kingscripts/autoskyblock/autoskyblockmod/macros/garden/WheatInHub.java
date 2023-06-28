@@ -92,6 +92,7 @@ public class WheatInHub {
     private static int hubLevel = 1;
     private static long startMillis = 0;
     private static boolean hasSavedMillis = false;
+    public static boolean pasting = true;
     private static long lastSavedDivision;
     private static Instant watch1;
     private static Instant watch2;
@@ -190,161 +191,68 @@ public class WheatInHub {
     @SubscribeEvent
     public void onTick(TickEvent.PlayerTickEvent event){
             if(MacroManager.scriptIsOn) {
+                if(pasting) {
+                    if (!hasSavedMillis) {
+                        watch1 = Instant.now();
+                        hasSavedMillis = true;
+                    }
+                    watch2 = Instant.now();
+                    if ((Duration.between(watch1, watch2).toMillis()) >= 5) {
+                        hasSavedMillis = false;
+                        execute(hubLevel, count1);
+                        if (count1 >= 909) {
+                            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLACK + "" + hubLevel));
+                            count1 = 0;
+                            hubLevel++;
+                        }
+                        count1++;
+                    }
+                } else {
                 if(!hasSavedMillis){
                     watch1 = Instant.now();
                     hasSavedMillis = true;
                 }
+
+                // call to the methods you want to benchmark
                 watch2 = Instant.now();
-                if ((Duration.between(watch1, watch2).toMillis()) >= 10) {
+                if((Duration.between(watch1, watch2).toMillis()) >= 10) {
                     hasSavedMillis = false;
-                execute(hubLevel,count1);
-                    if(count1 >= 909){
-                        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLACK + "" + hubLevel));
-                        count1 = 0;
-                        hubLevel++;
+//                    lastSavedDivision = (System.currentTimeMillis() - startMillis) / 25;
+                    File log = new File("C:\\Mod\\hubWheat.txt");
+                    try {
+                        if (!log.exists()) {
+                            System.out.println("We had to make a new file.");
+                            log.createNewFile();
+                        }
+                        PrintWriter out = new PrintWriter(new FileWriter(log, true));
+                        out.append("{");
+                        out.append("'").append(String.valueOf(Minecraft.getMinecraft().thePlayer.rotationYaw)).append("', ");
+                        out.append("'" + Minecraft.getMinecraft().thePlayer.rotationPitch + "', ");
+                        if (Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown()) out.append("'t', ");
+                        else out.append("'f', ");
+                        if (Minecraft.getMinecraft().gameSettings.keyBindSneak.isKeyDown()) out.append("'t', ");
+                        else out.append("'f', ");
+                        if (Minecraft.getMinecraft().gameSettings.keyBindSprint.isKeyDown()) out.append("'t', ");
+                        else out.append("'f', ");
+                        if (Minecraft.getMinecraft().gameSettings.keyBindLeft.isKeyDown()) out.append("'t', ");
+                        else out.append("'f', ");
+                        if (Minecraft.getMinecraft().gameSettings.keyBindRight.isKeyDown()) out.append("'t', ");
+                        else out.append("'f', ");
+                        if (Minecraft.getMinecraft().gameSettings.keyBindBack.isKeyDown()) out.append("'t', ");
+                        else out.append("'f', ");
+                        if (Minecraft.getMinecraft().gameSettings.keyBindForward.isKeyDown()) out.append("'t', ");
+                        else out.append("'f', ");
+                        if (Minecraft.getMinecraft().gameSettings.keyBindAttack.isKeyDown()) out.append("'t', ");
+                        else out.append("'f', ");
+                        if (Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown()) out.append("'t'},\n");
+                        else out.append("'f'},\n");
+                        out.close();
+                    } catch (IOException ignored) {
                     }
-                    count1++;
-                }
-//
-
-
-
-
-//                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.LIGHT_PURPLE + "" + (count / 200)));
-//                try {
-//                    File myObj = new File("C:\\Mod\\hubWheat.txt");
-//                    Scanner myReader = new Scanner(myObj);
-//                    while (myReader.hasNextLine()) {
-//                        data1 = myReader.nextLine();
-//                    }
-//                    myReader.close();
-//                } catch (FileNotFoundException e) {
-//                    System.out.println("An error occurred.");
-//                    e.printStackTrace();
-//                }
-//                if (count % 100 == 0) {
-//
-//                        //yaw,pitch,jump,sneak,sprint,left,right,back,forward,attack,useitem
-////                        Minecraft.getMinecraft().thePlayer.rotationYaw = Float.parseFloat(data.indexOf(0) + String.valueOf(data.indexOf(1)) + String.valueOf(data.indexOf(2)) + String.valueOf(data.indexOf(3)) + String.valueOf(data.indexOf(4)) + String.valueOf(data.indexOf(5)) + String.valueOf(data.indexOf(6)) + String.valueOf(data.indexOf(7)) + String.valueOf(data.indexOf(8)) + String.valueOf(data.indexOf(9)));
-////                        Minecraft.getMinecraft().thePlayer.rotationPitch = Float.parseFloat(data.indexOf(10) + String.valueOf(data.indexOf(11)) + String.valueOf(data.indexOf(12)) + String.valueOf(data.indexOf(13)) + String.valueOf(data.indexOf(14)) + String.valueOf(data.indexOf(15)) + String.valueOf(data.indexOf(16)) + String.valueOf(data.indexOf(17)) + String.valueOf(data.indexOf(18)) + String.valueOf(data.indexOf(19)));
-//                        if (data1.charAt(20) == 't')
-//                            KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
-//                        else KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), false);
-//                        if (data1.charAt(21) == 't')
-//                            KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
-//                        else KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), false);
-//                        if (data1.charAt(22) == 't')
-//                            KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true);
-//                        else KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), false);
-//                        if (data1.charAt(23) == 't')
-//                            KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), true);
-//                        else KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), false);
-//                        if (data1.charAt(24) == 't')
-//                            KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), true);
-//                        else KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), false);
-//                        if (data1.charAt(25) == 't')
-//                            KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), true);
-//                        else KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), false);
-//                        if (data1.charAt(26) == 't')
-//                            KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), true);
-//                        else KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), false);
-//                        if (data1.charAt(27) == 't')
-//                            KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
-//                        else KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), false);
-//                        if (data1.charAt(28) == 't')
-//                            KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), true);
-//                        else KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
-//                    }
 //                    count++;
-
-
-
-
-//                File log = new File("C:\\Mod\\hubWheat.txt");
-//                try{
-//                    if(!log.exists()){
-//                        System.out.println("We had to make a new file.");
-//                        log.createNewFile();
-//                    }
-//                    PrintWriter out = new PrintWriter(new FileWriter(log, true));
-////                        Yaw = String.valueOf(Minecraft.getMinecraft().thePlayer.rotationYaw);
-////                        yawL = String.valueOf(Minecraft.getMinecraft().thePlayer.rotationYaw).length();
-////                        if(yawL < 10) Yaw += '0';yawL++;
-////                        if(yawL < 10) Yaw += '0';yawL++;
-////                        if(yawL < 10) Yaw += '0';yawL++;
-////                        if(yawL < 10) Yaw += '0';yawL++;
-////                        if(yawL < 10) Yaw += '0';yawL++;
-////                        if(yawL < 10) Yaw += '0';yawL++;
-////                        if(yawL < 10) Yaw += '0';yawL++;
-////                        if(yawL < 10) Yaw += '0';yawL++;
-////                        Pitch = String.valueOf(Minecraft.getMinecraft().thePlayer.rotationPitch);
-////                        pitchL = String.valueOf(Minecraft.getMinecraft().thePlayer.rotationPitch).length();
-////                        if(pitchL < 10) Pitch += '0';pitchL++;
-////                        if(pitchL < 10) Pitch += '0';pitchL++;
-////                        if(pitchL < 10) Pitch += '0';pitchL++;
-////                        if(pitchL < 10) Pitch += '0';pitchL++;
-////                        if(pitchL < 10) Pitch += '0';pitchL++;
-////                        if(pitchL < 10) Pitch += '0';pitchL++;
-////                        if(pitchL < 10) Pitch += '0';pitchL++;
-////                        if(pitchL < 10) Pitch += '0';pitchL++;
-////                        out.append(Yaw);
-////                        out.append(Pitch);
-////                        if(Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown())out.append("t"); else out.append("f");
-////                        if(Minecraft.getMinecraft().gameSettings.keyBindSneak.isKeyDown())out.append("t"); else out.append("f");
-////                        if(Minecraft.getMinecraft().gameSettings.keyBindSprint.isKeyDown())out.append("t"); else out.append("f");
-////                        if(Minecraft.getMinecraft().gameSettings.keyBindLeft.isKeyDown())out.append("t"); else out.append("f");
-////                        if(Minecraft.getMinecraft().gameSettings.keyBindRight.isKeyDown())out.append("t"); else out.append("f");
-////                        if(Minecraft.getMinecraft().gameSettings.keyBindBack.isKeyDown())out.append("t"); else out.append("f");
-////                        if(Minecraft.getMinecraft().gameSettings.keyBindForward.isKeyDown())out.append("t"); else out.append("f");
-////                        if(Minecraft.getMinecraft().gameSettings.keyBindAttack.isKeyDown())out.append("t"); else out.append("f");
-////                        if(Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown())out.append("t\n"); else out.append("f\n");
-
-//              Being used
-//                if(!hasSavedMillis){
-//                    watch1 = Instant.now();
-//                    hasSavedMillis = true;
-//                }
-//
-//                // call to the methods you want to benchmark
-//                watch2 = Instant.now();
-//                if((Duration.between(watch1, watch2).toMillis()) >= 10) {
-//                    hasSavedMillis = false;
-////                    lastSavedDivision = (System.currentTimeMillis() - startMillis) / 25;
-//                    File log = new File("C:\\Mod\\hubWheat.txt");
-//                    try {
-//                        if (!log.exists()) {
-//                            System.out.println("We had to make a new file.");
-//                            log.createNewFile();
-//                        }
-//                        PrintWriter out = new PrintWriter(new FileWriter(log, true));
-//                        out.append("{");
-//                        out.append("'").append(String.valueOf(Minecraft.getMinecraft().thePlayer.rotationYaw)).append("', ");
-//                        out.append("'" + Minecraft.getMinecraft().thePlayer.rotationPitch + "', ");
-//                        if (Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown()) out.append("'t', ");
-//                        else out.append("'f', ");
-//                        if (Minecraft.getMinecraft().gameSettings.keyBindSneak.isKeyDown()) out.append("'t', ");
-//                        else out.append("'f', ");
-//                        if (Minecraft.getMinecraft().gameSettings.keyBindSprint.isKeyDown()) out.append("'t', ");
-//                        else out.append("'f', ");
-//                        if (Minecraft.getMinecraft().gameSettings.keyBindLeft.isKeyDown()) out.append("'t', ");
-//                        else out.append("'f', ");
-//                        if (Minecraft.getMinecraft().gameSettings.keyBindRight.isKeyDown()) out.append("'t', ");
-//                        else out.append("'f', ");
-//                        if (Minecraft.getMinecraft().gameSettings.keyBindBack.isKeyDown()) out.append("'t', ");
-//                        else out.append("'f', ");
-//                        if (Minecraft.getMinecraft().gameSettings.keyBindForward.isKeyDown()) out.append("'t', ");
-//                        else out.append("'f', ");
-//                        if (Minecraft.getMinecraft().gameSettings.keyBindAttack.isKeyDown()) out.append("'t', ");
-//                        else out.append("'f', ");
-//                        if (Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown()) out.append("'t'},\n");
-//                        else out.append("'f'},\n");
-//                        out.close();
-//                    } catch (IOException ignored) {
-//                    }
-////                    count++;
-////                    delayNumber++;
-//                }
-                //end of use
+//                    delayNumber++;
+                }
+                }
             }
     }
 
