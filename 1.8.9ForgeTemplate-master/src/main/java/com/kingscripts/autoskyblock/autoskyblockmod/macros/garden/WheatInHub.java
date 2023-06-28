@@ -52,6 +52,7 @@ public class WheatInHub {
         return null;
     }
     public static void execute(int whichFarm, int hubLevel,int count1) {
+        //Yaw, float, jump, sneak, sprint, left, right, back, forward, attack, use item
         Minecraft.getMinecraft().thePlayer.rotationYaw = Float.parseFloat(getWheatHub(whichFarm, hubLevel, count1, 0));
         Minecraft.getMinecraft().thePlayer.rotationPitch = Float.parseFloat(getWheatHub(whichFarm,hubLevel, count1, 1));
         if (getWheatHub(whichFarm, hubLevel, count1, 2) == "t") {//jump
@@ -124,7 +125,7 @@ public class WheatInHub {
                             }
                             count1++;
                         } else if(gameStage == 2){//Brings you to npc
-                            if (count1 <= 159 && hubLevel == 1) {//runs script
+                            if (count1 <= 158) {//runs script
                                 execute(2,1,count1);
                             } else  {
                                 count1 = 0;
