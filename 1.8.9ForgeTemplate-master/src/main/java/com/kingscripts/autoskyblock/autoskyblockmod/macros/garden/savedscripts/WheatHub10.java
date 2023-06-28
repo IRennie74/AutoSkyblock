@@ -2,7 +2,6 @@ package com.kingscripts.autoskyblock.autoskyblockmod.macros.garden.savedscripts;
 
 public class WheatHub10 {
     public static String[][] movement2 = {
-
             {"223.62598", "14.815711", "t", "f", "t", "f", "f", "f", "t", "f", "f"},
             {"223.62598", "14.815711", "t", "f", "t", "f", "f", "f", "t", "f", "f"},
             {"223.62598", "14.815711", "t", "f", "t", "f", "f", "f", "t", "f", "f"},

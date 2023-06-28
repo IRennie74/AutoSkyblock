@@ -178,11 +178,11 @@ public class WheatInHub {
         }
     }
     @SubscribeEvent
-    public void onTick(TickEvent.PlayerTickEvent event) throws InterruptedException {
+    public void onTick(TickEvent.PlayerTickEvent event){
             if(MacroManager.scriptIsOn) {
                 if (delayNumber % delay == 0) {
                 execute(hubLevel,count1);
-                    if(count1 >= 908){
+                    if(count1 >= 909){
                         Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.BLACK + "" + hubLevel));
                         count1 = 0;
                         hubLevel++;
