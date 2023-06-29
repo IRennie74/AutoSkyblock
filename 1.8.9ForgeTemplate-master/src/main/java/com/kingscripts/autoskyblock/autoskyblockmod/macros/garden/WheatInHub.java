@@ -15,6 +15,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -37,6 +38,7 @@ public class WheatInHub {
     private static int hubLevel = 1;
     private static boolean hasSavedMillis = false;
     private static boolean thisScriptOn = false;
+    private static boolean inventoryFull = false;
     public static boolean pasting = true;
     public static boolean canOpen = false;
     public static boolean isOpen = false;
@@ -111,9 +113,19 @@ public class WheatInHub {
     }
     @SubscribeEvent
     public void onOpen(GuiOpenEvent event){
-        if(canOpen){
-            isOpen = true;
+        if(MacroManager.scriptIsOn) {
+            if (canOpen) {
+                isOpen = true;
+            }
         }
+    }
+    @SubscribeEvent
+    public void inventoryFull(ClientChatReceivedEvent event) {
+        String message2 = event.message.getUnformattedText();
+        if(message2.contains("Inventory full?") && gameStage == 1) {
+            inventoryFull = true;
+        }
+
     }
     @SubscribeEvent
     public void onTick(TickEvent.PlayerTickEvent event){
@@ -125,6 +137,11 @@ public class WheatInHub {
                     }
                     watch2 = Instant.now();
                     if ((Duration.between(watch1, watch2).toMillis()) >= 10) {
+                        if(inventoryFull){
+                            inventoryFull = false;
+                            count1 = 0;
+                            hubLevel++;
+                        }
                         canOpen = true;
                         hasSavedMillis = false;
                         if(gameStage == 1) {//farms crops and brings you back to hub spawn
@@ -255,6 +272,7 @@ public class WheatInHub {
                                 Minecraft.getMinecraft().thePlayer.sendChatMessage("/warp hub");
                                 gameStage--;
                                 count1 = 0;
+                                start();
                             }
                         }
                     }
@@ -314,6 +332,7 @@ public class WheatInHub {
         hasSavedMillis = false;
         canOpen = false;
         isOpen = false;
+        inventoryFull = false;
     }
 
     public static void reset() {
@@ -325,6 +344,7 @@ public class WheatInHub {
         hasSavedMillis = false;
         canOpen = false;
         isOpen = false;
+        inventoryFull = false;
     }
     public static void main(){
         thisScriptOn = true;
