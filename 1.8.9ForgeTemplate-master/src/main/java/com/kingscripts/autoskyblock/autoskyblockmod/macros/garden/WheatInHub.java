@@ -256,7 +256,7 @@ public class WheatInHub {
                                     count1 = 0;
                             }
                         } else if (gameStage == 4){
-                            if (count1 <= 70) {//runs script
+                            if (count1 <= 80) {//runs script
                                 execute(4,1,count1);
                             } else  {
                                 count1 = 0;
