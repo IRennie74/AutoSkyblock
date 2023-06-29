@@ -246,7 +246,7 @@ public class WheatInHub {
                         } else if (gameStage == 5){
                             if(isOpen) {
                                 canOpen = false;
-                                mc.playerController.windowClick(mc.thePlayer.openContainer.windowId, 49, 0, 0, mc.thePlayer);
+                                mc.playerController.windowClick(mc.thePlayer.openContainer.windowId, 50, 0, 0, mc.thePlayer);
                                     gameStage = 1;
                                     isOpen = false;
                                     count1 = 0;
