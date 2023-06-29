@@ -140,7 +140,10 @@ public class WheatInHub {
                         if(inventoryFull){
                             inventoryFull = false;
                             count1 = 0;
-                            hubLevel++;
+                            count2 = 0;
+                            hubLevel = 1;
+                            gameStage++;
+                            Minecraft.getMinecraft().thePlayer.sendChatMessage("/warp hub");
                         }
                         canOpen = true;
                         hasSavedMillis = false;
