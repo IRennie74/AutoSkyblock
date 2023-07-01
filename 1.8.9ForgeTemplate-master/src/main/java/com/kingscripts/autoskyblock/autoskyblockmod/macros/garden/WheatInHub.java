@@ -130,14 +130,15 @@ public class WheatInHub {
     @SubscribeEvent
     public void onTick(TickEvent.PlayerTickEvent event){
             if(MacroManager.scriptIsOn) {
-                if(pasting) {
+                if(thisScriptOn){
+                if (pasting) {
                     if (!hasSavedMillis) {
                         watch1 = Instant.now();
                         hasSavedMillis = true;
                     }
                     watch2 = Instant.now();
                     if ((Duration.between(watch1, watch2).toMillis()) >= 10) {
-                        if(inventoryFull){
+                        if (inventoryFull) {
                             inventoryFull = false;
                             count1 = 0;
                             count2 = 0;
@@ -147,34 +148,36 @@ public class WheatInHub {
                         }
                         canOpen = true;
                         hasSavedMillis = false;
-                        if(gameStage == 1) {//farms crops and brings you back to hub spawn
-                            if(count2 >= 150){
-                            execute(1, hubLevel, count1);
-                            if (count1 >= 909 && hubLevel == 1) {
-                                count1 = 0;
-                                hubLevel++;
-                            } else if (count1 >= 809 && hubLevel == 2) {
-                                count1 = 0;
-                                count2 = 0;
-                                hubLevel = 1;
-                                gameStage++;
-                                Minecraft.getMinecraft().thePlayer.sendChatMessage("/warp hub");
+                        if (gameStage == 1) {//farms crops and brings you back to hub spawn
+                            if (count2 >= 150) {
+                                execute(1, hubLevel, count1);
+                                if (count1 >= 909 && hubLevel == 1) {
+                                    count1 = 0;
+                                    hubLevel++;
+                                } else if (count1 == 809 && hubLevel == 2) {
+                                    count1 = 0;
+                                    count2 = 0;
+                                    hubLevel = 1;
+                                    gameStage++;
+                                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/warp hub");
+                                    Utils.disableMovement();
+                                }
+                                count1++;
                             }
-                            count1++;
-                        }
                             count2++;
-                        } else if(gameStage == 2){//Brings you to npc
-                            if (count1 <= 158) {//runs script
-                                execute(2,1,count1);
-                            } else  {
+                        } else if (gameStage == 2) {//Brings you to npc
+                            if (count1 <= 140) {//runs script
+                                execute(2, 1, count1);
+                            } else {
                                 count1 = 0;
                                 gameStage++;
+                                Utils.disableMovement();
                             }
                             count1++;
-                        } else if(gameStage == 3){//sells inventory and brings you back to hub spawn
+                        } else if (gameStage == 3) {//sells inventory and brings you back to hub spawn
                             //Minecraft.getMinecraft().thePlayer.inventory.closeInventory(mc.thePlayer);//closes inventory
                             //Minecraft.getMinecraft().thePlayer.inventory.openInventory(mc.thePlayer);//opens inventory
-                            if(isOpen) {
+                            if (isOpen) {
                                 canOpen = false;
                                 if (count1 <= 10) {//skip 81 and 89
                                     mc.playerController.windowClick(mc.thePlayer.openContainer.windowId, 54, 0, 0, mc.thePlayer);
@@ -251,26 +254,27 @@ public class WheatInHub {
                                 }
                                 count1++;
                             } else {
-                                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/warp hub");
-                                    gameStage--;
-                                    count1 = 0;
+                                Minecraft.getMinecraft().thePlayer.sendChatMessage("/warp hub");
+                                gameStage--;
+                                count1 = 0;
                             }
-                        } else if (gameStage == 4){
+                        } else if (gameStage == 4) {
                             if (count1 <= 80) {//runs script
-                                execute(4,1,count1);
-                            } else  {
+                                execute(4, 1, count1);
+                            } else if (count1 == 81){
                                 count1 = 0;
                                 gameStage++;
+                                Utils.disableMovement();
                             }
                             count1++;
-                        } else if (gameStage == 5){
-                            if(isOpen) {
+                        } else if (gameStage == 5) {
+                            if (isOpen) {
                                 canOpen = false;
                                 mc.playerController.windowClick(mc.thePlayer.openContainer.windowId, 50, 0, 0, mc.thePlayer);
-                                    gameStage = 1;
-                                    isOpen = false;
-                                    count1 = 0;
-                                    MacroManager.warpExpected = true;
+                                gameStage = 1;
+                                isOpen = false;
+                                count1 = 0;
+                                MacroManager.warpExpected = true;
                             } else {
                                 Minecraft.getMinecraft().thePlayer.sendChatMessage("/warp hub");
                                 gameStage--;
@@ -280,49 +284,50 @@ public class WheatInHub {
                         }
                     }
                 } else {
-                if(!hasSavedMillis){
-                    watch1 = Instant.now();
-                    hasSavedMillis = true;
-                }
+                    if (!hasSavedMillis) {
+                        watch1 = Instant.now();
+                        hasSavedMillis = true;
+                    }
 
-                // call to the methods you want to benchmark
-                watch2 = Instant.now();
-                if((Duration.between(watch1, watch2).toMillis()) >= 10) {
-                    hasSavedMillis = false;
+                    // call to the methods you want to benchmark
+                    watch2 = Instant.now();
+                    if ((Duration.between(watch1, watch2).toMillis()) >= 10) {
+                        hasSavedMillis = false;
 //                    lastSavedDivision = (System.currentTimeMillis() - startMillis) / 25;
-                    File log = new File("C:\\Mod\\hubWheat.txt");
-                    try {
-                        if (!log.exists()) {
-                            System.out.println("We had to make a new file.");
-                            log.createNewFile();
+                        File log = new File("C:\\Mod\\hubWheat.txt");
+                        try {
+                            if (!log.exists()) {
+                                System.out.println("We had to make a new file.");
+                                log.createNewFile();
+                            }
+                            PrintWriter out = new PrintWriter(new FileWriter(log, true));
+                            out.append("{");
+                            out.append("'").append(String.valueOf(Minecraft.getMinecraft().thePlayer.rotationYaw)).append("', ");
+                            out.append("'" + Minecraft.getMinecraft().thePlayer.rotationPitch + "', ");
+                            if (Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown()) out.append("'t', ");
+                            else out.append("'f', ");
+                            if (Minecraft.getMinecraft().gameSettings.keyBindSneak.isKeyDown()) out.append("'t', ");
+                            else out.append("'f', ");
+                            if (Minecraft.getMinecraft().gameSettings.keyBindSprint.isKeyDown()) out.append("'t', ");
+                            else out.append("'f', ");
+                            if (Minecraft.getMinecraft().gameSettings.keyBindLeft.isKeyDown()) out.append("'t', ");
+                            else out.append("'f', ");
+                            if (Minecraft.getMinecraft().gameSettings.keyBindRight.isKeyDown()) out.append("'t', ");
+                            else out.append("'f', ");
+                            if (Minecraft.getMinecraft().gameSettings.keyBindBack.isKeyDown()) out.append("'t', ");
+                            else out.append("'f', ");
+                            if (Minecraft.getMinecraft().gameSettings.keyBindForward.isKeyDown()) out.append("'t', ");
+                            else out.append("'f', ");
+                            if (Minecraft.getMinecraft().gameSettings.keyBindAttack.isKeyDown()) out.append("'t', ");
+                            else out.append("'f', ");
+                            if (Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown()) out.append("'t'},\n");
+                            else out.append("'f'},\n");
+                            out.close();
+                        } catch (IOException ignored) {
                         }
-                        PrintWriter out = new PrintWriter(new FileWriter(log, true));
-                        out.append("{");
-                        out.append("'").append(String.valueOf(Minecraft.getMinecraft().thePlayer.rotationYaw)).append("', ");
-                        out.append("'" + Minecraft.getMinecraft().thePlayer.rotationPitch + "', ");
-                        if (Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown()) out.append("'t', ");
-                        else out.append("'f', ");
-                        if (Minecraft.getMinecraft().gameSettings.keyBindSneak.isKeyDown()) out.append("'t', ");
-                        else out.append("'f', ");
-                        if (Minecraft.getMinecraft().gameSettings.keyBindSprint.isKeyDown()) out.append("'t', ");
-                        else out.append("'f', ");
-                        if (Minecraft.getMinecraft().gameSettings.keyBindLeft.isKeyDown()) out.append("'t', ");
-                        else out.append("'f', ");
-                        if (Minecraft.getMinecraft().gameSettings.keyBindRight.isKeyDown()) out.append("'t', ");
-                        else out.append("'f', ");
-                        if (Minecraft.getMinecraft().gameSettings.keyBindBack.isKeyDown()) out.append("'t', ");
-                        else out.append("'f', ");
-                        if (Minecraft.getMinecraft().gameSettings.keyBindForward.isKeyDown()) out.append("'t', ");
-                        else out.append("'f', ");
-                        if (Minecraft.getMinecraft().gameSettings.keyBindAttack.isKeyDown()) out.append("'t', ");
-                        else out.append("'f', ");
-                        if (Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown()) out.append("'t'},\n");
-                        else out.append("'f'},\n");
-                        out.close();
-                    } catch (IOException ignored) {
                     }
                 }
-                }
+            }
             }
     }
 
